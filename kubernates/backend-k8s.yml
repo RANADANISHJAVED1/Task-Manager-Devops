@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: task-manager-backend
+  labels:
+    app: task-manager-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: task-manager-backend
+  template:
+    metadata:
+      labels:
+        app: task-manager-backend
+    spec:
+      containers:
+      - name: task-manager-backend
+        image: danishplayconsole1/task-manager-backend-image:latest
+        ports:
+        - containerPort: 3001
+      env:
+        - name: MONGO_URI
+          value: "mongodb://mongo:27017/tasks"
+        
