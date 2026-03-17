@@ -7,9 +7,9 @@ spec:
     app: task-manager-frontend
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 80
-  type: LoadBalancer
+      port: 3000          # external port
+      targetPort: 3000    # container port
+  type: NodePort          # NodePort so we can access via Minikube IP or EC2 public IP
 
 ---
 apiVersion: v1
@@ -23,6 +23,7 @@ spec:
     - protocol: TCP
       port: 3001
       targetPort: 3001
+  type: NodePort          # same reason as frontend
 
 ---
 apiVersion: v1
@@ -36,3 +37,4 @@ spec:
     - protocol: TCP
       port: 27017
       targetPort: 27017
+  type: ClusterIP         # MongoDB usually stays internal
