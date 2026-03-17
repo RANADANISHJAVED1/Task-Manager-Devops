@@ -1,0 +1,53 @@
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Cleaning') {
+            steps {
+                cleanWs()
+            }
+        }
+
+        stage('Github Clone') {
+            steps {
+                sh " git clone 'https://github.com/RANADANISHJAVED1/Task-Manager-Devops.git'"
+            }
+        }
+
+        stage('Frontend Image Build') {
+            steps {
+                sh 'docker --version'
+                dir('Task-Manager-Devops/frontend') {
+                    sh 'docker build -t danishplayconsole1/task-manager-frontend-image:latest .'
+                    sh 'docker images'
+                    withCredentials([usernamePassword(credentialsId: 'temp_docker_login', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
+                        sh 'docker login -u $USER -p $PASS'
+                    }
+                    sh 'docker push danishplayconsole1/task-manager-frontend-image:latest'
+                }
+            }
+        }
+
+        stage('Backend Image Build') {
+            steps {
+                dir('Task-Manager-Devops/backend') {
+                    sh 'docker build -t danishplayconsole1/task-manager-backend-image:latest .'
+                    sh 'docker push danishplayconsole1/task-manager-backend-image:latest'
+                }
+            }
+        }
+        stage('Build K8s Build') {
+            steps {
+                dir('Task-Manager-Devops/kubernates') {
+                    sh '''
+                    kubectl create -f backend-k8s.yml
+                    kubectl create -f frontend-k8s.yml
+                    kubectl create -f mongo-k8s.yml
+                    kubectl create -f services.yml
+                    '''
+                }
+            }
+        }
+    }
+}
