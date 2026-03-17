@@ -41,10 +41,10 @@ pipeline {
             steps {
                 dir('Task-Manager-Devops/kubernates') {
                     sh '''
-                    kubectl create -f backend-k8s.yml
-                    kubectl create -f frontend-k8s.yml
-                    kubectl create -f mongo-k8s.yml
-                    kubectl create -f services.yml
+                     kubectl apply -f backend-k8s.yml
+                     kubectl apply -f frontend-k8s.yml
+                     kubectl apply -f mongo-k8s.yml
+                     kubectl apply -f services.yml
                     '''
                 }
             }
